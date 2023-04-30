@@ -1,0 +1,20 @@
+#!/bin/bash -
+
+set -eu -o pipefail
+
+INVERTERS=012345AB
+USB_DEVICE=/dev/ttyUSB0
+INFLUX_URL=http://influxdb:8086
+INFLUX_ORG=org
+INFLUX_BUCKET=bucket
+INFLUX_TOKEN=xxxxxxxx
+SEMONITOR_LOG=/var/log/semonitor/semonitor.log
+
+/usr/local/bin/solaredge/semonitor.py -m -t 4 -s $INVERTERS $USB_DEVICE | \
+  /usr/local/bin/solaredge/utilities/se2influxv2.py \
+    --url $INFLUX_URL \
+    --bucket $INFLUX_BUCKET \
+    --token $INFLUX_TOKEN \
+    --org $INFLUX_ORG \
+    --stat_timer_secs 300 \
+    --log_path $SEMONITOR_LOG
